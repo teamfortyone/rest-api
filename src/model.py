@@ -1,5 +1,5 @@
 import numpy as np
-from keras.models import load_model
+from keras.models import model_from_json, load_model
 from keras.preprocessing.image import load_img, img_to_array
 from keras.preprocessing.sequence import pad_sequences
 from keras.applications.inception_v3 import preprocess_input
@@ -12,7 +12,18 @@ MAX_LENGTH = 52
 NPIX = 299
 TARGET_SIZE = (NPIX,NPIX,3)
 
-model = load_model("src/models/coco_19th_epoch.h5", compile=False)
+def load_model_from_json(path):
+    with open(path,"r") as f:
+        model = model_from_json(f.read())
+    print("Model loaded successfully")
+    return model
+
+model = load_model_from_json("src/models/model.json")
+
+# loading the weights of the model
+model.load_weights("src/models/amey_19.h5")
+
+# model = load_weights("src/models/model_final.h5", compile=False)
 modified_inception = load_model("src/models/modified_inception.h5", compile=False)
 
 index_and_words = load_pickle("src/models/index_and_words.pkl")
@@ -48,22 +59,22 @@ def get_feature_vector(img_path):
     img_array = img_to_array(img)
     nimage = preprocess_input(img_array)
     
-    # Adding one more dimesion
+    # Adding one more dimension
     nimage = np.expand_dims(nimage, axis=0)    
     fea_vec = modified_inception.predict(nimage)
     return np.reshape(fea_vec, fea_vec.shape[1])
 
 
-def generateCaption(img_path):
+def generate_caption(img_path):
     image = get_feature_vector(img_path)
     image = image.reshape((1,2048))
-    # caption = greedy_search(image)
-    # beam_caption = beam_search_predictions(image)
+    caption = greedy_search(image)
+    beam_caption = beam_search_predictions(image)
     beam_caption_k5 = beam_search_predictions(image, beam_index=5)
-    # print("Greedy Search:", caption)
-    # print("Beam Search (k=3):", beam_caption)
-    # print("Beam Search (k=5)", beam_caption_k5)
-    return beam_caption_k5
+    print("Greedy Search:", caption)
+    print("Beam Search (k=3):", beam_caption)
+    print("Beam Search (k=5)", beam_caption_k5)
+    return f"Greedy: {caption} | Beam(k=3): {beam_caption} | Beam(k=5): {beam_caption_k5}"
 
 def beam_search_predictions(photo, beam_index=3):
     start = [word_to_ix["startseq"]]

@@ -57,5 +57,53 @@ def get_feature_vector(img_path):
 def generateCaption(img_path):
     image = get_feature_vector(img_path)
     image = image.reshape((1,2048))
-    caption = greedy_search(image)
-    return caption
+    # caption = greedy_search(image)
+    # beam_caption = beam_search_predictions(image)
+    beam_caption_k5 = beam_search_predictions(image, beam_index=5)
+    # print("Greedy Search:", caption)
+    # print("Beam Search (k=3):", beam_caption)
+    # print("Beam Search (k=5)", beam_caption_k5)
+    return beam_caption_k5
+
+def beam_search_predictions(photo, beam_index=3):
+    start = [word_to_ix["startseq"]]
+    
+    # start_word[0][0] = index of the starting word
+    # start_word[0][1] = probability of the word predicted
+    start_word = [[start, 0.0]]
+    
+    while len(start_word[0][0]) < MAX_LENGTH:
+        temp = []
+        for s in start_word:
+            par_caps = pad_sequences([s[0]], maxlen=MAX_LENGTH, padding='post')
+            preds = model.predict([photo, par_caps], verbose=0)
+            
+            # Getting the top <beam_index>(n) predictions
+            word_preds = np.argsort(preds[0])[-beam_index:]
+            
+            # creating a new list so as to put them via the model again
+            for w in word_preds:
+                next_cap, prob = s[0][:], s[1]
+                next_cap.append(w)
+                prob += preds[0][w]
+                temp.append([next_cap, prob])
+                    
+        start_word = temp
+        # Sorting according to the probabilities
+        start_word = sorted(start_word, reverse=False, key=lambda l: l[1])
+        # Getting the top words
+        start_word = start_word[-beam_index:]
+    
+    start_word = start_word[-1][0]
+    intermediate_caption = [ix_to_word[i] for i in start_word]
+
+    final_caption = []
+    
+    for i in intermediate_caption:
+        if i != 'endseq':
+            final_caption.append(i)
+        else:
+            break
+    
+    final_caption = ' '.join(final_caption[1:])
+    return final_caption

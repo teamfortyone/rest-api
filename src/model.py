@@ -68,10 +68,10 @@ def get_feature_vector(img_path):
 def generate_caption(img_path):
     image = get_feature_vector(img_path)
     image = image.reshape((1,2048))
-    caption = greedy_search(image)
-    beam_caption = beam_search_predictions(image)
-    beam_caption_k5 = beam_search_predictions(image, beam_index=5)
-    return f"Greedy: {caption} | Beam(k=3): {beam_caption} | Beam(k=5): {beam_caption_k5}"
+    greedy = greedy_search(image)
+    beam_k3 = beam_search_predictions(image)
+    beam_k5 = beam_search_predictions(image, beam_index=5)
+    return greedy, beam_k3, beam_k5
 
 def beam_search_predictions(photo, beam_index=3):
     start = [word_to_ix["startseq"]]

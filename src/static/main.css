@@ -113,7 +113,7 @@ body {
   filter: brightness(30%);
 }
 
-#pred-result {
+#greedy, #beam_k3, #beam_k5 {
   color: black;
   font-size: 1rem;
   position: absolute;

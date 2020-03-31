@@ -35,7 +35,9 @@ function fileSelectHandler(e) {
 var imagePreview = document.getElementById("image-preview");
 var imageDisplay = document.getElementById("image-display");
 var uploadCaption = document.getElementById("upload-caption");
-var predResult = document.getElementById("pred-result");
+var greedy = document.getElementById("greedy");
+var beam_k3 = document.getElementById("beam_k3");
+var beam_k5 = document.getElementById("beam_k5");
 var loader = document.getElementById("loader");
 
 //========================================================================
@@ -65,7 +67,9 @@ function clearImage() {
   // remove image sources and hide them
   imagePreview.src = "";
   imageDisplay.src = "";
-  predResult.innerHTML = "";
+  greedy.innerHTML = "";
+  beam_k3.innerHTML = "";
+  beam_k5.innerHTML = "";
 
   hide(imagePreview);
   hide(imageDisplay);
@@ -90,7 +94,9 @@ function previewFile(file) {
     hide(uploadCaption);
 
     // reset
-    predResult.innerHTML = "";
+    greedy.innerHTML = "";
+    beam_k3.innerHTML = "";
+    beam_k5.innerHTML = "";
     imageDisplay.classList.remove("loading");
 
     displayImage(reader.result, "image-display");
@@ -132,8 +138,12 @@ function displayResult(data) {
   // display the result
   imageDisplay.classList.remove("loading");
   hide(loader);
-  predResult.innerHTML = data.caption;
-  show(predResult);
+  greedy.innerHTML = "Greedy: " + data.greedy;
+  beam_k3.innerHTML = "Beam (k=3): " + data.beam_k3;
+  beam_k5.innerHTML = "Beam (k=5): " + data.beam_k5;
+  show(greedy);
+  show(beam_k3);
+  show(beam_k5);
 }
 
 function hide(el) {

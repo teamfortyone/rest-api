@@ -16,11 +16,16 @@ def index():
     # Main page
     return render_template('index.html')
 
-@app.route('/caption', methods=['GET', 'POST'])
-def upload_file():
-    if request.method == 'POST':
-        # check if the post request has the file part
-        img = base64_to_pil(request.json)
-        img = fix_image_orientation(img)
-        return jsonify(caption=generate_caption(img), status="OK")
-    return None
+@app.route('/caption', methods=['POST'])
+def upload_web():
+    img = base64_to_pil(request.json)
+    img = fix_image_orientation(img)
+    greedy, beam_k3, beam_k5 = generate_caption(img)
+    return jsonify(greedy=greedy, beam_k3=beam_k3, beam_k5=beam_k5, status="OK")
+
+@app.route('/android', methods=['POST'])
+def upload_android():
+    img = base64_to_pil(request.data, substitute_prefix=False)
+    img = fix_image_orientation(img)
+    greedy, beam_k3, beam_k5 = generate_caption(img)
+    return jsonify(greedy=greedy, beam_k3=beam_k3, beam_k5=beam_k5, status="OK")

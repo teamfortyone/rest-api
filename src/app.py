@@ -22,5 +22,5 @@ def upload_file():
         # check if the post request has the file part
         img = base64_to_pil(request.json)
         img = fix_image_orientation(img)
-        return jsonify(caption = generate_caption(img), status="OK")
+        return jsonify(caption=generate_caption(img), status="OK")
     return None

@@ -5,15 +5,15 @@ from pickle import load
 from PIL import Image, ExifTags
 
 
-ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg'}
-
-
-def base64_to_pil(img_base64):
+def base64_to_pil(img_base64, substitute_prefix=True):
     """
     Convert base64 image data to PIL image
     """
-    image_data = re.sub('^data:image/.+;base64,', '', img_base64)
-    pil_image = BytesIO(base64.b64decode(image_data))
+    if substitute_prefix:
+        image_data = re.sub('^data:image/.+;base64,', '', img_base64)
+        pil_image = BytesIO(base64.b64decode(image_data))
+    else:
+        pil_image = BytesIO(base64.b64decode(img_base64))
     return pil_image
     
 

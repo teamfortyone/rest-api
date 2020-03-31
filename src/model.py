@@ -71,9 +71,6 @@ def generate_caption(img_path):
     caption = greedy_search(image)
     beam_caption = beam_search_predictions(image)
     beam_caption_k5 = beam_search_predictions(image, beam_index=5)
-    print("Greedy Search:", caption)
-    print("Beam Search (k=3):", beam_caption)
-    print("Beam Search (k=5)", beam_caption_k5)
     return f"Greedy: {caption} | Beam(k=3): {beam_caption} | Beam(k=5): {beam_caption_k5}"
 
 def beam_search_predictions(photo, beam_index=3):

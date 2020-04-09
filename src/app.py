@@ -1,4 +1,5 @@
 import os
+from io import BytesIO
 
 from flask import Flask, request, jsonify, render_template
 
@@ -23,16 +24,22 @@ def upload_web():
         img = fix_image_orientation(img)
         greedy, beam_k3, beam_k5 = generate_caption(img)
         return jsonify(greedy=greedy, beam_k3=beam_k3, beam_k5=beam_k5, status="OK")
-    except:
+    except Exception as e:
+        app.logger.info("Exception:", e)
         return jsonify(status="FAILED")
 
 @app.route('/android', methods=['POST'])
 def upload_android():
     try:
-        img = base64_to_pil(request.data, substitute_prefix=False)
-        img = fix_image_orientation(img)
+        img_file = request.files['image']
+        img_bytes = BytesIO(img_file.read())
+        img = fix_image_orientation(img_bytes)
         greedy, beam_k3, beam_k5 = generate_caption(img)
         return jsonify(greedy=greedy, beam_k3=beam_k3, beam_k5=beam_k5, status="OK")
     except Exception as e:
-        print(e)
+        app.logger.info("Exception:", e)
         return jsonify(status="FAILED")
+
+
+if __name__ == "__main__":
+    app.run(debug=True, host="0.0.0.0")

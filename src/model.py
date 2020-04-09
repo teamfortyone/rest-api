@@ -60,7 +60,7 @@ def get_feature_vector(img_path):
     nimage = preprocess_input(img_array)
     
     # Adding one more dimension
-    nimage = np.expand_dims(nimage, axis=0)    
+    nimage = np.expand_dims(nimage, axis=0)
     fea_vec = modified_inception.predict(nimage)
     return np.reshape(fea_vec, fea_vec.shape[1])
 

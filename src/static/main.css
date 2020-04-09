@@ -116,10 +116,8 @@ body {
 #greedy, #beam_k3, #beam_k5 {
   color: black;
   font-size: 1rem;
-  position: absolute;
-  /* top: 50%; */
-  left: 50%;
-  transform: translate(-50%, -50%);
+  margin: 0 auto;
+  padding-bottom: 5px;
 }
 
 #loader {

@@ -131,3 +131,13 @@ dmypy.json
 wsl/
 
 src/post_test.py
+
+src/models/model_demo16.h5
+
+src/models/model_demo19.h5
+
+test.jpg
+
+test2.jpg
+
+test3.jpg
